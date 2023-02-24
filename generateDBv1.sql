@@ -1,86 +1,117 @@
-create table main.Actions
+create table main.actions
 (
-    action_id   integer not null
-        constraint action_id
+    action_id   integer
+        constraint actions_pk
             primary key,
-    description TEXT
+    description integer
 );
 
-create table main."Air Quality Consequences"
+create table main.climate_impact
 (
-    airq_consequence_id integer not null
-        constraint "Air Quality Consequences_pk"
+    c_impact_id     integer not null
+        constraint climate_impact_pk
             primary key,
-    name                text    not null,
-    description         text    not null,
-    reference_value     integer not null,
-    target_value        integer not null,
-    immersion_value     integer not null
-);
-
-create table main.Domains
-(
-    domain_id   integer not null
-        constraint domain_id
-            primary key,
-    name        TEXT    not null,
-    land_type   TEXT    not null,
-    inhabitants integer not null,
-    river       bool    not null,
-    sea         bool    not null,
-    mountain    bool    not null,
-    island      bool    not null
-);
-
-create table main.Emissions
-(
-    emission_id     integer not null
-        constraint Emissions_pk
-            primary key,
-    name            TEXT    not null,
+    name            text    not null,
     description     text    not null,
     reference_value integer not null,
     immersion_value integer not null,
-    target_value    integer not null,
-    category        text
+    unit            text    not null,
+    target_value    integer
 );
 
-create table main.Sectors
+create table main.domains
 (
-    sector_id integer not null
-        constraint sector_id
+    domain_id   integer not null,
+    name        text    not null,
+    land_type   text    not null,
+    inhabitants integer not null,
+    river       bool    not null,
+    island      bool    not null,
+    sea         bool    not null,
+    mountain    bool    not null
+);
+
+create table main.parameters
+(
+    param_id    integer not null
+        constraint parameters_pk
             primary key,
-    name      TEXT    not null
+    name        text    not null,
+    description text
 );
 
-create table main.emissions_airq_consequences
+create table main.concentrations
 (
-    airq_consequence_id integer not null
-        constraint "emissions_airq_consequences_Air Quality Consequences_airq_consequence_id_fk"
-            references main."Air Quality Consequences",
-    emission_id         integer not null
-        constraint emissions_airq_consequences_Emissions_emission_id_fk
-            references main.Emissions
+    concentration_id integer not null
+        constraint concentrations_pk
+            primary key,
+    name             text    not null,
+    reference_value  integer not null,
+    immersion_value  integer not null,
+    target_value     integer,
+    param_id         integer not null
+        constraint concentrations_parameters_param_id_fk
+            references main.parameters
 );
 
-create table main.sector_domains
+create table main.emissions
 (
-    sector_id integer not null
-        constraint domain_sector
-            references main.Sectors,
-    domain_id integer not null
-        constraint sector_domain
-            references main.Domains
+    emission_id     integer not null
+        constraint emissions_pk
+            primary key,
+    domain_id       integer not null
+        constraint emissions_domains_domain_id_fk
+            references main.domains (domain_id),
+    name            integer not null,
+    description     integer not null,
+    reference_value integer not null,
+    target_value    integer not null,
+    immersion_value integer not null,
+    param_id        integer not null
+        constraint emissions_parameters_param_id_fk
+            references main.parameters
 );
 
-create table main.sector_emission
+create table main.emissions_impact
+(
+    emission_id integer not null
+        constraint emissions_impact_emissions_emission_id_fk
+            references main.emissions,
+    c_impact_id integer not null
+        constraint emissions_impact_climate_impact_c_impact_id_fk
+            references main.climate_impact
+);
+
+create table main.pollution_impact
+(
+    p_impact_id      integer not null,
+    name             text    not null,
+    description      text    not null,
+    concentration_id integer not null
+        constraint pollution_impact_concentrations_coen_fk
+            references main.concentrations
+);
+
+create table main.sectors
 (
     sector_id   integer not null
-        constraint sector_emission_Sectors_sector_id_fk
-            references main.Sectors,
+        constraint sectors_pk
+            primary key,
     emission_id integer not null
-        constraint sector_emission_Emissions_emission_id_fk
-            references main.Emissions
+        constraint sectors_emissions_emission_id_fk
+            references main.emissions,
+    weight      real    not null,
+    name        text    not null
+);
+
+create table main.actions_sectors
+(
+    action_id integer not null
+        constraint actions_sectors_actions_action_id_fk
+            references main.actions,
+    sector_id integer not null
+        constraint actions_sectors_sectors_sector_id_fk
+            references main.sectors
 );
 
 create table main.sqlite_master
@@ -91,5 +122,4 @@ create table main.sqlite_master
     rootpage INT,
     sql      TEXT
 );
-
 
