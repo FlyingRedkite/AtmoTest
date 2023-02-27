@@ -12,75 +12,64 @@ create table domains
         primary key (domain_id)
 );
 
-create table impact
+create table parameter_type
 (
-    impact_id       integer not null,
-    name            text    not null,
-    description     text    not null,
-    reference_value integer not null,
-    immersion_value integer not null,
-    unit            text    not null,
-    target_value    integer,
-    constraint impact_pk
-        primary key (impact_id)
-);
-
-create table actions
-(
-    action_id   integer,
-    description text not null,
-    impact_id   integer,
-    delta       real,
-    constraint actions_pk
-        primary key (action_id),
-    constraint actions_impact_impact_id_fk
-        foreign key (impact_id) references impact
+    parameter_type_id integer not null,
+    name              text    not null,
+    description       text    not null,
+    unit              text    not null,
+    constraint parameter_type_pk
+        primary key (parameter_type_id)
 );
 
 create table parameters
 (
-    parameter_id    integer not null,
-    name            integer not null,
-    description     integer not null,
-    reference_value integer not null,
-    target_value    integer not null,
-    immersion_value integer not null,
-    domain_id       integer not null,
+    parameter_id      integer not null,
+    reference_value   real    not null,
+    target_value      real    not null,
+    immersion_value   real    not null,
+    domain_id         integer not null,
+    parameter_type_id integer not null,
     constraint parameter_pk
         primary key (parameter_id),
     constraint parameters_domains_domain_id_fk
-        foreign key (domain_id) references domains
+        foreign key (domain_id) references domains,
+    constraint parameters_parameter_type_parameter_type_id_fk
+        foreign key (parameter_type_id) references parameter_type
 );
 
-create table parameter_impact
+create table player_type
 (
-    parameter_id integer not null,
-    impact_id    integer not null,
-    constraint parameter_impact_impact_impact_id_fk
-        foreign key (impact_id) references impact,
-    constraint parameter_impact_parameters_parameter_id_fk
-        foreign key (parameter_id) references parameters
+    player_type_id integer not null,
+    name           text    not null,
+    constraint "player type_pk"
+        primary key (player_type_id)
 );
 
 create table sectors
 (
-    sector_id    integer not null,
-    weight       real    not null,
-    name         text    not null,
-    parameter_id integer,
+    sector_id integer not null,
+    name      text    not null,
     constraint sectors_pk
-        primary key (sector_id),
-    constraint sectors_parameters_parameter_id_fk
-        foreign key (parameter_id) references parameters
+        primary key (sector_id)
 );
 
-create table action_sector_link
+create table actions
 (
-    sector_id integer not null,
-    action_id integer not null,
-    constraint action_sector_link_actions_action_id_fk
-        foreign key (action_id) references actions,
-    constraint action_sector_link_sectors_sector_id_fk
+    action_id    integer,
+    description  text    not null,
+    parameter_id integer not null,
+    delta        real,
+    player_type  integer not null,
+    weight       real default 0.5,
+    sector_id    integer not null,
+    constraint actions_pk
+        primary key (action_id),
+    constraint actions_parameters_parameter_id_fk
+        foreign key (parameter_id) references parameters,
+    constraint "actions_player type_player_type_id_fk"
+        foreign key (player_type) references player_type,
+    constraint actions_sectors_sector_id_fk
         foreign key (sector_id) references sectors
 );
 
@@ -110,4 +99,3 @@ create table sqlite_master
     rootpage INT,
     sql      TEXT
 );
-

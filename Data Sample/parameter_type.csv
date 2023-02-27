@@ -1,0 +1,8 @@
+1,Pop_NO2,Population exposed to conentrations higher than the new European Directive (limit value) or than the WHO guidelines for the reference year ,Population
+2,Pop_PM10,Population exposed to conentrations higher than the new European Directive (limit value) or than the WHO guidelines for the reference year ,Population
+3,Emi_NO2,Reduction of the emissions for the reference year compared to 2005,%
+4,Emi_PM10,Reduction of the emissions for the reference year compared to 2005,%
+5,Biodiv_Climate,Loss of global biodiversity in 2050 compared to the reference year (higher value of the projection),%
+6,Dry_Climate,Occurrence frequency of extreme drought event (return period of 10 years) for the reference year compared to the period 1850-1900,*
+7,Health_Climate_Nights,Number of tropical nights,Integer
+8,Temperatures_Climate,Temperature increase (compared to the period 1976-2005) for the reference year,°C
